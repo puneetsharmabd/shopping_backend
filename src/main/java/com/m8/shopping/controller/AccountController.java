@@ -16,7 +16,7 @@ public class AccountController {
 
     @GetMapping("/test")
     @Tag(name = "Test",description = "This is a test api")
-    @SecurityRequirement(name = "shopping-api")
+    @SecurityRequirement(name = "shopping-api")  //This SecurityRequirement is added to enable token access to /test api
     public String test(){
         return "Demo test";
     }
