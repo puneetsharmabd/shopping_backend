@@ -15,8 +15,6 @@ public class UserLoginDTO{
     @Schema(description = "Email address" , example = "admin@gmail.com" , requiredMode = RequiredMode.REQUIRED)
     private String email;
 
-    @Size(min = 6, max = 20)
-    @Schema(description = "Password" , example = "password@8" , 
-    requiredMode = RequiredMode.REQUIRED , minLength = 6 , maxLength = 20)
+    @Schema(description = "Password" , example = "password@8" , requiredMode = RequiredMode.REQUIRED)
     private String password;
 }

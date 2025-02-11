@@ -16,7 +16,7 @@ public class AccountDTO {
     private String email;
 
     @Size(min = 6, max = 20)
-    @Schema(description = "Password" , example = "password@8" , 
+    @Schema(description = "Password" , example = "password" , 
     requiredMode = RequiredMode.REQUIRED , minLength = 6 , maxLength = 20)
     private String password;
 }

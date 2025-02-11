@@ -13,12 +13,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.m8.shopping.model.Account;
+import com.m8.shopping.payload.auth.AccountDTO;
 import com.m8.shopping.repository.AccountRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class AccountService implements UserDetailsService{
+
+    String TAG = "AccountService";
     
     @Autowired
     private AccountRepository accountRepository;
@@ -27,7 +32,6 @@ public class AccountService implements UserDetailsService{
     private PasswordEncoder passwordEncoder;
 
     public Account save(Account account){
-        account.setPassword(passwordEncoder.encode(account.getPassword()));
         if (account.getRole() == null) {
             account.setRole("ROLE_USER");
         }
@@ -49,5 +53,21 @@ public class AccountService implements UserDetailsService{
         List<GrantedAuthority> grantedAuthority = new ArrayList();
         grantedAuthority.add(new SimpleGrantedAuthority(account.getRole()));
         return new User(account.getEmail(),account.getPassword(),grantedAuthority);
+    }
+
+    public boolean existsByEmail(AccountDTO accountDTO){
+        if (accountRepository.existsByEmail(accountDTO.getEmail())) {
+        return true;
+    }
+        return false;
+    }
+
+    public Optional<Account> findByEmail(String email) {
+        return accountRepository.findByEmail(email);
+    }
+
+    public Optional<Account> findByToken(String token) {
+        log.debug(TAG, "signupStoreUser");
+        return accountRepository.findByToken(token);
     }
 }

@@ -15,16 +15,19 @@ public class SeedData implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+
         Account account1 = new Account();
         account1.setEmail("admin@gmail.com");
-        account1.setPassword("admin");
+        account1.setPassword("admin@123");
         account1.setRole("ROLE_ADMIN");
+        account1.setToken("adminToken");
         accountService.save(account1);
 
         Account account2 = new Account();
         account2.setEmail("puneet@gmail.com");
-        account2.setPassword("puneet");
+        account2.setPassword("puneet@123");
         account2.setRole("ROLE_USER");
+        account2.setToken("puneetToken");
         accountService.save(account2);
     }
     
