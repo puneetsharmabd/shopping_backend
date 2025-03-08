@@ -18,6 +18,8 @@ import com.m8.shopping.payload.auth.AccountDTO;
 import com.m8.shopping.payload.auth.TokenDTO;
 import com.m8.shopping.service.AccountService;
 import com.m8.shopping.service.TokenService;
+import com.m8.shopping.util.utils.utils;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -84,7 +86,7 @@ public class ApiController {
             Account account = new Account();
             account.setEmail(accountDTO.getEmail());
             account.setPassword(passwordEncoder.encode(accountDTO.getPassword()));
-            account.setRole("ROLE_STORE");
+            account.setRole(utils.ROLE_STORE);
             accountService.save(account);
             Authentication authentication = authenticationManager
         .authenticate(new UsernamePasswordAuthenticationToken(accountDTO.getEmail(), accountDTO.getPassword()));
