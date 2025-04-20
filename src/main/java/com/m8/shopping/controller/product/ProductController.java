@@ -6,6 +6,7 @@ import com.m8.shopping.model.store.Store;
 import com.m8.shopping.payload.apiPayload.GenericResponseDTO;
 import com.m8.shopping.payload.apiPayload.ProductDTO;
 import com.m8.shopping.payload.apiPayload.ProductResponseDTO;
+import com.m8.shopping.payload.apiPayload.StoreDTO;
 import com.m8.shopping.service.AccountService;
 import com.m8.shopping.service.product.ProductService;
 import com.m8.shopping.service.store.StoreService;
@@ -18,6 +19,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+
+import static org.mockito.Mockito.description;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,12 +42,7 @@ public class ProductController {
 
     @PostMapping(value = "/create")
     @SecurityRequirement(name = "shopping-api")
-    public GenericResponseDTO<ProductResponseDTO> createProduct(
-            @RequestParam("productName") String productName,
-            @RequestParam("description") String description,
-            @RequestParam("price") double price,
-            @RequestParam("stockQuantity") int stockQuantity,
-            @RequestParam("storeId") Long storeId) {
+    public GenericResponseDTO<ProductResponseDTO> createProduct(@RequestBody ProductDTO productDTO) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -58,7 +57,7 @@ public class ProductController {
 
         Account account = optionalAccount.get();
 
-        Optional<Store> optionalStore = storeService.getStoreById(storeId);
+        Optional<Store> optionalStore = storeService.getStoreById(productDTO.getStoreId());
         if (optionalStore.isEmpty()) {
             return new GenericResponseDTO<>(HttpStatus.NOT_FOUND.value(), "Store not found", null);
         }
@@ -70,10 +69,10 @@ public class ProductController {
         }
 
         Product product = new Product();
-        product.setProductName(productName);
-        product.setDescription(description);
-        product.setPrice(price);
-        product.setStockQuantity(stockQuantity);
+        product.setProductName(productDTO.getProductName());
+        product.setDescription(productDTO.getDescription());
+        product.setPrice(productDTO.getPrice());
+        product.setStockQuantity(productDTO.getStockQuantity());
         product.setStore(store);
         productService.createProduct(product);
 
