@@ -2,6 +2,7 @@ package com.m8.shopping.model;
 
 import com.m8.shopping.model.store.Store;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,6 +24,7 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
 
+    @Column(unique = true)
     private String email;
 
     private String password;

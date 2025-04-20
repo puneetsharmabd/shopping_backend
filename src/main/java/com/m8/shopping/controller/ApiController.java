@@ -16,9 +16,9 @@ import com.m8.shopping.payload.apiPayload.LoginResponseDTO;
 import com.m8.shopping.payload.apiPayload.SignupResponseDTO;
 import com.m8.shopping.payload.auth.AccountDTO;
 import com.m8.shopping.payload.auth.TokenDTO;
+import com.m8.shopping.util.utils.*;
 import com.m8.shopping.service.AccountService;
 import com.m8.shopping.service.TokenService;
-import com.m8.shopping.util.utils.utils;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/api")
-@Tag(name = "Api Controller",description = "Controller for Api Management")
+@Tag(name = "V1 Api Controller",description = "Controller for Api Management")
 @Slf4j
 public class ApiController {
 
