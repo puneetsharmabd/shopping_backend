@@ -21,24 +21,24 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class AccountService implements UserDetailsService{
+public class AccountService implements UserDetailsService {
 
     String TAG = "AccountService";
-    
+
     @Autowired
     private AccountRepository accountRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public Account save(Account account){
+    public Account save(Account account) {
         if (account.getRole() == null) {
             account.setRole("ROLE_USER");
         }
         return accountRepository.save(account);
     }
 
-    public List<Account> findAll(){
+    public List<Account> findAll() {
         return accountRepository.findAll();
     }
 
@@ -52,13 +52,13 @@ public class AccountService implements UserDetailsService{
         Account account = optionalAccount.get();
         List<GrantedAuthority> grantedAuthority = new ArrayList();
         grantedAuthority.add(new SimpleGrantedAuthority(account.getRole()));
-        return new User(account.getEmail(),account.getPassword(),grantedAuthority);
+        return new User(account.getEmail(), account.getPassword(), grantedAuthority);
     }
 
-    public boolean existsByEmail(AccountDTO accountDTO){
+    public boolean existsByEmail(AccountDTO accountDTO) {
         if (accountRepository.existsByEmail(accountDTO.getEmail())) {
-        return true;
-    }
+            return true;
+        }
         return false;
     }
 

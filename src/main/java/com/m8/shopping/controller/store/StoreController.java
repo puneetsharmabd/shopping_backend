@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/stores")
-@Tag(name = "Store Controller", description = "Controller for Store Management")
+@Tag(name = "V1 Store Controller", description = "Controller for Store Management")
 @Slf4j
 public class StoreController {
     String TAG = "StoreController";
