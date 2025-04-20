@@ -19,9 +19,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
-
-import static org.mockito.Mockito.description;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
