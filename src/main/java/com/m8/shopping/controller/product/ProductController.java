@@ -5,6 +5,8 @@ import com.m8.shopping.model.photo.Photo;
 import com.m8.shopping.model.product.Product;
 import com.m8.shopping.model.store.Store;
 import com.m8.shopping.payload.apiPayload.GenericResponseDTO;
+import com.m8.shopping.payload.apiPayload.GetProductResponseDTO;
+import com.m8.shopping.payload.apiPayload.PhotoDTO;
 import com.m8.shopping.payload.apiPayload.ProductDTO;
 import com.m8.shopping.payload.apiPayload.ProductResponseDTO;
 import com.m8.shopping.payload.apiPayload.PhotoResponseDTO;
@@ -204,7 +206,7 @@ public class ProductController {
 
     @GetMapping("/getAllProducts")
     @SecurityRequirement(name = "shopping-api")
-    public GenericResponseDTO<List<ProductResponseDTO>> getAllProducts() {
+    public GenericResponseDTO<List<GetProductResponseDTO>> getAllProducts() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return new GenericResponseDTO<>(HttpStatus.UNAUTHORIZED.value(), "Unauthorized access", null);
@@ -225,14 +227,24 @@ public class ProductController {
         }
 
         // Filter products by store owned by the account.
-        List<ProductResponseDTO> productResponseDTOs = products.stream()
+        List<GetProductResponseDTO> productResponseDTOs = products.stream()
                 .filter(product -> product.getStore().equals(account.getStore()))
-                .map(product -> new ProductResponseDTO(
-                        product.getId(),
-                        product.getProductName(),
-                        product.getDescription(),
-                        product.getPrice(),
-                        product.getStockQuantity()))
+                .map(product -> {
+                    List<Photo> photos = photoService.getPhotosByProductId(product.getId());
+                    List<String> photoUrls = photos.stream()
+                            .map(photo -> {
+                                String baseUrl = "http://localhost:8080/resources/static/uploads/" + product.getId();
+                                return baseUrl + "/" + photo.getFilename();
+                            })
+                            .collect(Collectors.toList());
+                    return new GetProductResponseDTO(
+                            product.getId(),
+                            product.getProductName(),
+                            product.getDescription(),
+                            product.getPrice(),
+                            product.getStockQuantity(),
+                            photoUrls);
+                })
                 .collect(Collectors.toList());
 
         return new GenericResponseDTO<>(HttpStatus.OK.value(), "Products retrieved successfully", productResponseDTOs);
@@ -271,9 +283,10 @@ public class ProductController {
 
         List<String> fileNamesWithSuccess = new ArrayList<>();
         List<String> fileNamesWithError = new ArrayList<>();
-        Photo photo = new Photo();
-
+        List<PhotoDTO> photos = new ArrayList<>();
+        System.out.println(files.length + " File length");
         Arrays.asList(files).stream().forEach(file -> {
+            System.out.println(file.getContentType() + " File type");
             String contentType = file.getContentType();
             if (contentType != null) {
                 if (contentType.equals("image/png")
@@ -292,11 +305,14 @@ public class ProductController {
                         String absolute_fileLocation = AppUtil.get_photo_upload_path(final_photo_name, productId);
                         Path path = Paths.get(absolute_fileLocation);
                         Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+                        Photo photo = new Photo();
                         photo.setName(fileName);
                         photo.setFilename(final_photo_name);
                         photo.setOriginalFileName(fileName);
                         photo.setProduct(product);
                         photoService.createPhoto(photo);
+                        PhotoDTO photoDTO = new PhotoDTO(photo.getId(), photo.getName(), photo.getFilename(), photo.getOriginalFileName());
+                        photos.add(photoDTO);      
 
                     } catch (Exception e) {
                         Logger.getLogger(e.getMessage());
@@ -310,8 +326,7 @@ public class ProductController {
 
             }
         });
-        PhotoResponseDTO photoResponseDTO = new PhotoResponseDTO(photo.getId(),photo.getName(),photo.getOriginalFileName(),photo.getFilename(),photo.getProduct().getId());
-
+        PhotoResponseDTO photoResponseDTO = new PhotoResponseDTO(photos);
         return new GenericResponseDTO<>(HttpStatus.OK.value(), "Photo created successfully", photoResponseDTO);
     }
 
